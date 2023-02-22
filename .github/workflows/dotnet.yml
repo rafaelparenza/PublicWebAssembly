@@ -29,6 +29,6 @@ jobs:
 
     # publishes Blazor project to the release-folder
     - name: Publish .NET Core Project
-      run: dotnet publish BlazorApp3.sln -c Release -o release --nologo
+      run: dotnet publish BlazorApp3/BlazorApp3.csproj -c Release -o release --nologo
       
 
