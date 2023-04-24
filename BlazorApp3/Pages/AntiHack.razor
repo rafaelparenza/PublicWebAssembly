@@ -1,0 +1,72 @@
+﻿@page "/antihack"
+@inject HttpClient Http
+@using BlazorTable
+<PageTitle>antihack</PageTitle>
+
+
+<Table TableItem="Feed" Items="root?.feeds" PageSize="15">
+    <Column TableItem="Feed" Title="IP" Field="@(x => x.field1)" Sortable="true" Filterable="true" Width="10%" />
+    <Column TableItem="Feed" Title="JOGO" Field="@(x => x.field2)" Sortable="true" Filterable="true" Width="20%" />
+    <Column TableItem="Feed" Title="NICK" Field="@(x => x.field3)" Sortable="true" Filterable="true" Width="20%" />
+    <Column TableItem="Feed" Title="PROGRAMAS ABERTOS" Field="@(x => x.field4)" Sortable="true" Filterable="true" Width="20%">
+        <Template>
+            @((MarkupString)context.field4.Replace(",", "<br>⇨"))
+        </Template>
+    </Column>
+    <Column TableItem="Feed" Title="data" Field="@(x => x.created_at)" Sortable="true" Filterable="true" Width="10%">
+        <Template>
+            @context.created_at.ToString("dd/MM/yyyy HH:mm:ss")
+        </Template>
+    </Column>
+    <Pager ShowPageNumber="true" ShowTotalCount="true" />
+</Table>
+
+
+
+
+@code {
+    private int currentCount = 0;
+    public Root root { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        root = await Http.GetFromJsonAsync<Root>("https://api.thingspeak.com/channels/788684/feeds.json?results=200") ?? new();
+        root.feeds = root.feeds.OrderByDescending(a=>a.created_at).ToList();
+    }
+    public async Task Atualizar()
+    {
+        root = await Http.GetFromJsonAsync<Root>("https://api.thingspeak.com/channels/788684/feeds.json?results=200") ?? new();
+        root.feeds = root.feeds.OrderByDescending(a => a.created_at).ToList();        
+    }
+
+
+    public class Channel
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string latitude { get; set; }
+        public string longitude { get; set; }
+        public string field1 { get; set; }
+        public string field2 { get; set; }
+        public string field3 { get; set; }
+        public string field4 { get; set; }
+        public DateTime created_at { get; set; }
+        public DateTime updated_at { get; set; }
+        public int last_entry_id { get; set; }
+    }
+
+    public class Feed
+    {
+        public DateTime created_at { get; set; }
+        public int entry_id { get; set; }
+        public string field1 { get; set; }
+        public string field2 { get; set; }
+        public string field3 { get; set; }
+        public string field4 { get; set; }
+    }
+
+    public class Root
+    {
+        public Channel channel { get; set; }
+        public List<Feed> feeds { get; set; }
+    }
+}
