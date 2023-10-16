@@ -2,6 +2,8 @@
 @inject HttpClient Http
 @using BlazorTable
 <PageTitle>antihack</PageTitle>
+
+<input type="text" placeholder="senha" @bind-value=senha /><button class="btn btn-primary" @onclick="envie">Atualizar </button>
 <a href="https://github.com/rafaelparenza/AntiHack_Release/releases/tag/publish">Antihack download</a>
 
 <Table TableItem="Feed" Items="root?.feeds" PageSize="15">
@@ -25,20 +27,25 @@
 
 
 @code {
+    private string senha = "";
     private int currentCount = 0;
     public Root root { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        root = await Http.GetFromJsonAsync<Root>("https://api.thingspeak.com/channels/788684/feeds.json?results=200") ?? new();
-        root.feeds = root.feeds.OrderByDescending(a=>a.created_at).ToList();
+   
     }
     public async Task Atualizar()
     {
         root = await Http.GetFromJsonAsync<Root>("https://api.thingspeak.com/channels/788684/feeds.json?results=200") ?? new();
         root.feeds = root.feeds.OrderByDescending(a => a.created_at).ToList();        
     }
-
-
+    public async Task envie(){
+        if (senha == "h@bb02023")
+        {
+            await Atualizar();
+        }
+    }
+    
     public class Channel
     {
         public int id { get; set; }
