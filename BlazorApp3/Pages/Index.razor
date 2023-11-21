@@ -1,9 +1,338 @@
 ﻿@page "/"
+@using Microsoft.JSInterop
+@using System.Text.Json.Serialization;
 
 <PageTitle>Index</PageTitle>
+@if (loading==false)
+{
+    <div>
+        <h3>Gerador de sumula&nbsp;&nbsp;&nbsp;<button class="btn btn-info" @onclick="@(()=>sumula = new(1))"> Resetar </button> </h3>
+        <div class="row">
+            <div class="col-md-5">
+                <label for="nomeTimeA">Time A:</label>
+                <input id="nomeTimeA" @bind="sumula.nomeTimeA" class="form-control" />
 
-<h1>Olá</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Nome</th>
+                            <th>Gols</th>
+                            <th>Assistências</th>
+                            <th>Gols Contra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var jogador in sumula.jogadoresTimeA??new())
+                        {
+                            <tr>
+                                <td>
+                                    <select id="selectA" @bind="jogador.posicao" class="form-control">
+                                        <option value="GK">GK</option>
+                                        <option value="ZAG">ZAG</option>
+                                        <option value="MID">MID</option>
+                                        <option value="ATK">ATK</option>
+                                    </select>
+                                </td>
+                                <td><input @bind-value="jogador.nome" class="form-control" /></td>
+                                <td><input @bind="jogador.gols" class="form-control" type="number" /></td>
+                                <td><input @bind-value="jogador.assistencias" class="form-control" type="number" /></td>
+                                <td><input @bind-value="jogador.golsContra" class="form-control" type="number" /></td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="5"><button class="btn btn-link" @onclick="@(()=>sumula.jogadoresTimeA.Add(new("MID")))">adicionar jogador</button></td>
+                        </tr>
+                    </tbody>
 
-Projeto modelo desenvolvido em web assembly
+                </table>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+            </div>
+            <div class="col-md-1" style="text-align:center;">
+                <BR>
+                <b>@sumula.placarTimeA VS @sumula.placarTimeB</b>
+            </div>
+            <div class="col-md-5">
+                <label for="nomeTimeB">Time B: </label>
+                <input id="nomeTimeB" @bind="sumula.nomeTimeB" class="form-control" />
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Nome</th>
+                            <th>Gols</th>
+                            <th>Assistências</th>
+                            <th>Gols Contra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var jogador in sumula.jogadoresTimeB??new())
+                        {
+                            <tr>
+                                <td>
+                                    <select id="selectB" @bind="jogador.posicao" class="form-control">
+                                        <option value="GK">GK</option>
+                                        <option value="ZAG">ZAG</option>
+                                        <option value="MID">MID</option>
+                                        <option value="ATK">ATK</option>
+                                    </select>
+                                </td>
+                                <td><input @bind-value="jogador.nome" class="form-control" /></td>
+                                <td><input @bind="jogador.gols" class="form-control" type="number" /></td>
+                                <td><input @bind-value="jogador.assistencias" class="form-control" type="number" /></td>
+                                <td><input @bind-value="jogador.golsContra" class="form-control" type="number" /></td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="5"><button class="btn btn-link" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">adicionar jogador</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2">
+                <label for="selectEvento">Evento:</label>
+                <select id="selectEvento" @bind="@eventoSelecionado" class="form-control">
+                    <option value="Gol">Gol</option>
+                    <option value="Assistencia">Assistência</option>
+                    <option value="Contra">Contra</option>
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <label for="selectEvento">Jogador:</label>
+                <select id="selectEvento" @bind="@nomeJogador" class="form-control">
+                    <option value="">Selecione</option>
+
+                    @foreach (var i in sumula.todosJogadores)
+                    {
+                        <option value="@i.nome">@i.nome</option>
+                    }
+
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <button @onclick="AdicionarEvento" class="btn btn-primary mt-3">Adicionar evento</button>
+            </div>
+            <div class="col-lg-6">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Evento</th>
+                            <th>Nome</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var evento in logs??new())
+                        {
+                            <tr>
+                                <td>@evento.data.ToString("dd/MM/yyyy HH:MM:ss")</td>
+                                <td>@evento.evento</td>
+                                <td>@evento.nome</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div style="width:100%; text-align:center; padding:10px">
+            <div></div>
+            <div></div>
+        <button class="btn btn-primary" style="width:200px" @onclick="CopiarTexto">Finalizar sumula</button>
+        </div>
+        <div>Copie e cole o texto abaixo no fórum</div>
+        <div style="border: 1px solid black;padding:10px">
+            @(
+                (MarkupString)sumula.sssumula
+                )
+        </div>
+    </div>
+}
+
+@code {
+    public string eventoSelecionado { get; set; } = "Gol";
+    public string nomeJogador { get; set; } = "";
+    public objSumula sumula { get; set; } = new();
+    public List<Log> logs { get; set; } = new();
+    public bool loading { get; set; }
+    public class Jogadores
+    {
+        public Jogadores()
+        {
+        }
+        public Jogadores(String NOME)
+        {
+            posicao = NOME;
+        }
+        public string posicao { get; set; }
+        public string nome { get; set; }
+        public int gols { get; set; }
+        public int assistencias { get; set; }
+        public int golsContra { get; set; }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            loading = true;
+            obterSumula();
+            loading = false;
+        }
+        catch
+        {
+
+        }
+    }
+    public async void AdicionarEvento()
+    {
+        base.StateHasChanged();
+        var i = sumula.todosJogadores.FirstOrDefault(a => a.nome == nomeJogador);
+        if (i == null)
+        {
+            return;
+        }
+        logs.Add(new Log(eventoSelecionado, nomeJogador));
+
+        if (eventoSelecionado == "Gol")
+        {
+            i.gols++;
+
+        }
+        else if (eventoSelecionado == "Assistencia")
+        {
+            i.assistencias++;
+
+        }
+        else if (eventoSelecionado == "Contra")
+        {
+            i.golsContra++;
+        }
+        var j = System.Text.Json.JsonSerializer.Serialize(sumula);
+
+        await SetCookie("sumula", j, 5);
+
+    }
+    private async void obterSumula()
+    {
+        var x = await GetCookie("sumula");
+        if (string.IsNullOrEmpty(x))
+        {
+            this.sumula = new(1);
+        }
+        else
+        {
+            var s = System.Text.Json.JsonSerializer.Deserialize<objSumula>(x);
+            this.sumula = s;
+            
+            StateHasChanged();
+        }
+    }
+    public class Log
+    {
+        public Log(string evento, string nome)
+        {
+            this.evento = evento;
+            this.nome = nome;
+            data = DateTime.Now;
+        }
+        public DateTime data { get; set; }
+        public string evento { get; set; }
+        public string nome { get; set; }
+    }
+    private async Task CopiarTexto()
+    {
+        try
+        {
+            sumula.obtersumula();
+            //await _js.InvokeVoidAsync("navigator.clipboard.writeText", sumula.sssumula);
+            //await _js.InvokeVoidAsync("exibirAlerta", "Copiado para area de transferencia");
+        }
+        catch
+        {
+
+        }
+    }
+    public async Task<string> GetCookie(string key)
+    {
+        return await _js.InvokeAsync<string>("cookieFunctions.getCookie", key);
+    }
+
+    public async Task SetCookie(string key, string value, int expireDays)
+    {
+        await _js.InvokeVoidAsync("cookieFunctions.setCookie", key, value, expireDays);
+    }
+
+    public async Task RemoveCookie(string key)
+    {
+        await _js.InvokeVoidAsync("cookieFunctions.removeCookie", key);
+    }
+    public class objSumula
+    {
+        public objSumula(int i)
+        {
+            jogadoresTimeA = new();
+            jogadoresTimeA.Add(new("GK"));
+            jogadoresTimeA.Add(new("MID"));
+            jogadoresTimeA.Add(new("ZAG"));
+            jogadoresTimeA.Add(new("ATK"));
+
+            jogadoresTimeB = new();
+            jogadoresTimeB.Add(new("GK"));
+            jogadoresTimeB.Add(new("MID"));
+            jogadoresTimeB.Add(new("ZAG"));
+            jogadoresTimeB.Add(new("ATK"));
+        }
+        public objSumula()
+        {
+        }
+        public string nomeTimeA { get; set; } = "";
+        public string nomeTimeB { get; set; } = "";
+        [JsonIgnore]
+        public int placarTimeA { get { return jogadoresTimeB.Select(a => a.golsContra).Sum() + jogadoresTimeA.Select(a => a.gols).Sum(); } }
+        [JsonIgnore]
+        public int placarTimeB { get { return jogadoresTimeA.Select(a => a.golsContra).Sum() + jogadoresTimeB.Select(a => a.gols).Sum(); } }
+        public List<Jogadores> jogadoresTimeA { get; set; } = new();
+        public List<Jogadores> jogadoresTimeB { get; set; } = new();
+        [JsonIgnore]
+        public List<Jogadores> todosJogadores
+        {
+            get
+            {
+                var jogadores = new List<Jogadores>();
+                jogadores.AddRange(jogadoresTimeA);
+                jogadores.AddRange(jogadoresTimeB);
+                return jogadores;
+            }
+        }
+        public void obtersumula()
+        {
+            sssumula = $@"<b>{nomeTimeA} {placarTimeA} VS {placarTimeB} {nomeTimeB}";
+            sssumula += $@"<table style='border:1px solid black'>";
+            sssumula += $@"<tr><th colspan=5>CASA: {nomeTimeA}</th></tr>";
+            sssumula += "<tr><th>| posicao |</th> <th>| Jogador |</th><th>|gol|</th> <th>| assistencia | </th> <th>| gol contra |</th></b><tr>";
+
+            foreach (var i in jogadoresTimeA)
+            {
+                sssumula += "<tr style='border:1px solid black'><td>| " + i.posicao + " |</td><td>| " + i.nome + " |</td><td>| " + i.gols + " |</td><td>| " + i.assistencias + " |</td><td>| " + i.golsContra + " |</td></tr>";
+
+            }
+            sssumula += $@"<br><table style='border:1px solid black'>"; 
+            sssumula += $@"<tr><th colspan=5>VISITANTE: {nomeTimeB}</th></tr>";
+            sssumula += "<tr><th>| posicao |</th> <th>| Jogador |</th><th>|gol|</th> <th>| assistencia | </th> <th>| gol contra |</th></b><tr>";
+
+            foreach (var i in jogadoresTimeB)
+            {
+                sssumula += "<tr style='border:1px solid black'><td>| " + i.posicao + " |</td><td>| " + i.nome + " |</td><td>| " + i.gols + " |</td><td>| " + i.assistencias + " |</td><td>| " + i.golsContra + " | </td></tr>";
+
+            }
+
+        }
+        [JsonIgnore]
+        public string sssumula { get; set; }
+    }
+
+}
