@@ -6,7 +6,7 @@
 @if (loading==false)
 {
     <div>
-        <h3>Gerador de sumula&nbsp;&nbsp;&nbsp;<button class="btn btn-info" @onclick="@(()=>sumula = new(1))"> Resetar </button> </h3>
+        <h3>Gerador de sumula&nbsp;&nbsp;&nbsp;<button class="btn btn-info" @onclick="@(()=>{sumula = new(1);RemoveCookie();})"> Resetar </button> </h3>
         <div class="row" style="width:100%;font-size:10pt">
             <div class="col-md-5">
                 <label for="nomeTimeA">Time A:</label>
@@ -222,6 +222,8 @@
         if (string.IsNullOrEmpty(x))
         {
             this.sumula = new(1);
+            StateHasChanged();
+
         }
         else
         {
@@ -266,9 +268,9 @@
         await _js.InvokeVoidAsync("cookieFunctions.setCookie", key, value, expireDays);
     }
 
-    public async Task RemoveCookie(string key)
+    public async Task RemoveCookie()
     {
-        await _js.InvokeVoidAsync("cookieFunctions.removeCookie", key);
+        await _js.InvokeVoidAsync("cookieFunctions.removeCookie", "sumula");
     }
     public class objSumula
     {
