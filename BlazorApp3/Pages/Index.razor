@@ -7,7 +7,7 @@
 {
     <div>
         <h3>Gerador de sumula&nbsp;&nbsp;&nbsp;<button class="btn btn-info" @onclick="@(()=>sumula = new(1))"> Resetar </button> </h3>
-        <div class="row">
+        <div class="row" style="width:100%">
             <div class="col-md-5">
                 <label for="nomeTimeA">Time A:</label>
                 <input id="nomeTimeA" @bind="sumula.nomeTimeA" class="form-control" />
@@ -15,11 +15,11 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Posição</th>
+                            <th style="width:80px">Posição</th>
                             <th>Nome</th>
-                            <th>Gols</th>
-                            <th>Assistências</th>
-                            <th>Gols Contra</th>
+                            <th style="width:100px">Gols</th>
+                            <th style="width:100px">Assis</th>
+                            <th style="width:100px">G.Contra</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,11 +58,11 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Posição</th>
+                            <th style="width:80px">Posição</th>
                             <th>Nome</th>
-                            <th>Gols</th>
-                            <th>Assistências</th>
-                            <th>Gols Contra</th>
+                            <th style="width:100px">Gols</th>
+                            <th style="width:100px">Assis</th>
+                            <th style="width:100px">G. Contra</th>
                         </tr>
                     </thead>
                     <tbody>
