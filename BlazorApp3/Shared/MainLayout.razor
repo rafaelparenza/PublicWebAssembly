@@ -1,20 +1,91 @@
 ﻿@inherits LayoutComponentBase
 @using MudBlazor
-<MudThemeProvider/>
+<MudThemeProvider IsDarkMode=_isDarkMode />
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 <div class="page">
     <div class="sidebar">
-        <NavMenu />
     </div>
+    
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+        <MudAppBar Dense Style="background-color:transparent" Fixed="true">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => OpenDrawer(Anchor.Start))" />
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Brightness6"
+                           Color="Color.Inherit"
+                           Class="nav-button"
+                           OnClick="@ThemeToggle" />
+            <MudIconButton Href="https://github.com/rafaelparenza" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+        </MudAppBar>
 
-        <article class="content px-4">
-            @Body
+      
+            <MudDrawer @bind-Open="@open" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
+                <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Projeto</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Href="">Inicio</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Href="antihack">Antihack</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        
+
+        <article class="content py-12" style="background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%)">
+            <MudPaper Elevation=20 Class="container-xl content px-4 py-4">
+                @Body
+            </MudPaper>
         </article>
     </main>
 </div>
+@code {
+    bool open;
+    bool _isDarkMode = false;
+
+    Anchor anchor;
+
+    void OpenDrawer(Anchor anchor)
+    {
+        open = true;
+        this.anchor = anchor;
+    }
+    void ThemeToggle() => _isDarkMode = !_isDarkMode;
+
+    public static string[] fonts
+    {
+        get { return new string[] { "Poppins", "Helvetica Neue", "Helvetica", "Arial", "sans-serif" }; }
+    }
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            Palette = new Palette()
+            {
+                Primary = "#3B4AFF",
+                Secondary = "#666666",
+                AppbarBackground = "#ffffff",
+                AppbarText = "#ffffff",
+                DrawerBackground = "#0169B0",
+                DrawerText = "#ffffff",
+                DrawerIcon = "#ffffff",
+                Background = "#ffffff"
+                //Define other properties here.
+            },
+            Typography = new Typography()
+            {
+                Body2 = new Body2()
+                {
+                    FontSize = "10pt",
+                    FontFamily = fonts
+
+                },
+                Default = new Default()
+                {
+                    FontSize = "10pt",
+                    FontFamily = fonts
+                }
+
+            }
+
+        };
+
+
+}

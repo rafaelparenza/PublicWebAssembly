@@ -3,16 +3,26 @@
 @using System.Text.Json.Serialization;
 
 <PageTitle>Index</PageTitle>
-@if (loading==false)
+@if (loading == false)
 {
     <div>
-        <h3>Gerador de sumula&nbsp;&nbsp;&nbsp;<button class="btn btn-info" @onclick="@(()=>{sumula = new(1);RemoveCookie();})"> Resetar </button> </h3>
+        <h3>Gerador de sumula&nbsp;&nbsp;&nbsp;<MudButton Variant=Variant.Outlined Color="Color.Info" @onclick="@(()=>{sumula = new(1);RemoveCookie();})"> Resetar </MudButton> </h3>
         <div class="row" style="width:100%;font-size:10pt">
             <div class="col-md-5">
                 <label for="nomeTimeA">Time A:</label>
-                <input id="nomeTimeA" @bind="sumula.nomeTimeA" class="form-control" />
+                <input @onblur=gravarsumula id="nomeTimeA" @bind="sumula.nomeTimeA" class="form-control" />
+            </div>
+            <div class="col-md-2" style="text-align:center;">
+                <BR>
+                <b>@sumula.placarTimeA VS @sumula.placarTimeB</b>
+            </div>
+            <div class="col-md-5">
+                <label for="nomeTimeB">Time B: </label>
+                <input @onblur=gravarsumula id="nomeTimeB" @bind="sumula.nomeTimeB" class="form-control" />
+            </div>
 
-                <table class="table" style="font-size:10pt">
+            <div class="col-md-6">
+                <table Class="table-sm" style="width:100%">
                     <thead>
                         <tr>
                             <th style="width:80px">Posição</th>
@@ -23,7 +33,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var jogador in sumula.jogadoresTimeA??new())
+                        @foreach (var jogador in sumula.jogadoresTimeA ?? new())
                         {
                             <tr>
                                 <td>
@@ -34,28 +44,23 @@
                                         <option value="ATK">ATK</option>
                                     </select>
                                 </td>
-                                <td><input @bind-value="jogador.nome" class="form-control" /></td>
-                                <td><input @bind="jogador.gols" class="form-control" type="number" /></td>
-                                <td><input @bind-value="jogador.assistencias" class="form-control" type="number" /></td>
-                                <td><input @bind-value="jogador.golsContra" class="form-control" type="number" /></td>
+                                <td><input @onblur=gravarsumula @bind-value="jogador.nome" class="form-control" /></td>
+                                <td><input @onblur=gravarsumula @bind="jogador.gols" class="form-control" type="number" /></td>
+                                <td><input @onblur=gravarsumula @bind-value="jogador.assistencias" class="form-control" type="number" /></td>
+                                <td><input @onblur=gravarsumula @bind-value="jogador.golsContra" class="form-control" type="number" /></td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="5"><button class="btn btn-link" @onclick="@(()=>sumula.jogadoresTimeA.Add(new("MID")))">adicionar jogador</button></td>
+                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">Add jogador</MudButton></td>
                         </tr>
                     </tbody>
 
                 </table>
 
             </div>
-            <div class="col-md-1" style="text-align:center;">
-                <BR>
-                <b>@sumula.placarTimeA VS @sumula.placarTimeB</b>
-            </div>
-            <div class="col-md-5">
-                <label for="nomeTimeB">Time B: </label>
-                <input id="nomeTimeB" @bind="sumula.nomeTimeB" class="form-control" />
-                <table class="table">
+
+            <div class="col-md-6">
+                <table Class="table-sm" style="width:100%">
                     <thead>
                         <tr>
                             <th style="width:80px">Posição</th>
@@ -66,7 +71,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var jogador in sumula.jogadoresTimeB??new())
+                        @foreach (var jogador in sumula.jogadoresTimeB ?? new())
                         {
                             <tr>
                                 <td>
@@ -77,14 +82,14 @@
                                         <option value="ATK">ATK</option>
                                     </select>
                                 </td>
-                                <td><input @bind-value="jogador.nome" class="form-control" /></td>
-                                <td><input @bind="jogador.gols" class="form-control" type="number" /></td>
-                                <td><input @bind-value="jogador.assistencias" class="form-control" type="number" /></td>
-                                <td><input @bind-value="jogador.golsContra" class="form-control" type="number" /></td>
+                                <td><input @onblur=gravarsumula @bind-value="jogador.nome" class="form-control" /></td>
+                                <td><input @onblur=gravarsumula @bind="jogador.gols" class="form-control" type="number" /></td>
+                                <td><input @onblur=gravarsumula @bind-value="jogador.assistencias" class="form-control" type="number" /></td>
+                                <td><input @onblur=gravarsumula @bind-value="jogador.golsContra" class="form-control" type="number" /></td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="5"><button class="btn btn-link" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">adicionar jogador</button></td>
+                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">Add jogador</MudButton></td>
                         </tr>
                     </tbody>
                 </table>
@@ -113,19 +118,100 @@
                 </select>
             </div>
             <div class="col-lg-2">
-                <button @onclick="AdicionarEvento" class="btn btn-primary mt-3">Adicionar evento</button>
+                <MudButton Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" @onclick="AdicionarEvento" class="btn btn-primary mt-3">Add evento</MudButton>
             </div>
             <div class="col-lg-6">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Evento</th>
-                            <th>Nome</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var evento in logs??new())
+
+                <MudTextField @onblur=gravarsumula T="string" Label="Anotações do Juiz" Variant="Variant.Filled" @bind-Text="@sumula.Anotacoes" Lines="4" />
+
+            </div>
+            
+
+        </div>
+        
+
+        @*<div style="width:100%; text-align:center; padding:10px">
+    <div></div>
+    <div></div>
+    <button class="btn btn-primary" style="width:200px" @onclick="CopiarTexto">Finalizar sumula</button>
+    </div>*@
+        <div class="row">
+            <div class="col-lg-6">
+                <div>Copie e cole o texto abaixo no fórum</div>
+                <div style="border: 1px solid black;padding:10px; background-color:white; height:100%">
+
+                    <div style="color:black"><b>@sumula.nomeTimeA @sumula.placarTimeA VS @sumula.placarTimeB @sumula.nomeTimeB</b></div>
+                    <div style="color:darkblue"><b>Casa: @sumula.nomeTimeA </b></div>
+
+                    <table class="table-sm">
+                        <thead>
+                            <tr style="color:darkblue">
+                                <td><b>| Posição |</b></td>
+                                <td><b>| Nome | </b></td>
+                                <td><b>| Gols |</b></td>
+                                <td><b>| Assistência |</b></td>
+                                <td><b>| G. Contra |</b></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var i in sumula.jogadoresTimeA ?? new())
+                            {
+                                <tr>
+                                    <td>&nbsp;@i.posicao &nbsp</td>
+                                    <td>&nbsp;@i.nome &nbsp;</td>
+                                    <td>&nbsp;@i.gols &nbsp;</td>
+                                    <td>&nbsp;@i.assistencias &nbsp;</td>
+                                    <td>&nbsp;@i.golsContra &nbsp;</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div style="color:darkgreen"><b>Visitante: @sumula.nomeTimeB </b></div>
+
+                    <table class="table-sm">
+                        <thead>
+                            <tr style="color:darkgreen">
+                                <td><b>| Posição |</b></td>
+                                <td><b>| Nome | </b></td>
+                                <td><b>| Gols |</b></td>
+                                <td><b>| Assistência |</b></td>
+                                <td><b>| G. Contra |</b></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var i in sumula.jogadoresTimeB ?? new())
+                            {
+                                <tr>
+                                    <td>&nbsp;@i.posicao &nbsp</td>
+                                    <td>&nbsp;@i.nome &nbsp;</td>
+                                    <td>&nbsp;@i.gols &nbsp;</td>
+                                    <td>&nbsp;@i.assistencias &nbsp;</td>
+                                    <td>&nbsp;@i.golsContra &nbsp;</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <div style="color:black"><b>Anotações do Juiz:</b></div>
+                    <div> @((MarkupString)sumula.Anotacoes.Replace("\n","<br>"))</div>
+
+                </div>
+            </div>
+            <div class="col-lg-6" >
+                <div>Log do jogo</div>
+                <div style="border: 1px solid darkblue;padding:10px; background-color:white; height:100%">
+                <MudSimpleTable Dense Striped Bordered Hover>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Evento</th>
+                        <th>Nome</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var evento in logs ?? new())
                         {
                             <tr>
                                 <td>@evento.data.ToString("dd/MM/yyyy HH:MM:ss")</td>
@@ -134,23 +220,13 @@
                             </tr>
                         }
                     </tbody>
-                </table>
+                </MudSimpleTable>
+                </div>
             </div>
-
-        </div>
-
-        <div style="width:100%; text-align:center; padding:10px">
-            <div></div>
-            <div></div>
-        <button class="btn btn-primary" style="width:200px" @onclick="CopiarTexto">Finalizar sumula</button>
-        </div>
-        <div>Copie e cole o texto abaixo no fórum</div>
-        <div style="border: 1px solid black;padding:10px">
-            @(
-                (MarkupString)sumula.sssumula
-                )
         </div>
     </div>
+    <br />
+    <br />
 }
 
 @code {
@@ -216,6 +292,12 @@
         await SetCookie("sumula", j, 5);
 
     }
+
+    private async Task gravarsumula()
+    {
+        var j = System.Text.Json.JsonSerializer.Serialize(sumula);
+        await SetCookie("sumula", j, 5);
+    }
     private async void obterSumula()
     {
         var x = await GetCookie("sumula");
@@ -229,7 +311,7 @@
         {
             var s = System.Text.Json.JsonSerializer.Deserialize<objSumula>(x);
             this.sumula = s;
-            
+
             StateHasChanged();
         }
     }
@@ -322,7 +404,7 @@
                 sssumula += "<tr style='border:1px solid black'><td>| " + i.posicao + " |</td><td>| " + i.nome + " |</td><td>| " + i.gols + " |</td><td>| " + i.assistencias + " |</td><td>| " + i.golsContra + " |</td></tr>";
 
             }
-            sssumula += $@"<br><table style='border:1px solid black'>"; 
+            sssumula += $@"<br><table style='border:1px solid black'>";
             sssumula += $@"<tr><th colspan=5>VISITANTE: {nomeTimeB}</th></tr>";
             sssumula += "<tr><th>| posicao |</th> <th>| Jogador |</th><th>|gol|</th> <th>| assistencia | </th> <th>| gol contra |</th></b><tr>";
 
@@ -335,6 +417,8 @@
         }
         [JsonIgnore]
         public string sssumula { get; set; }
+
+        public string Anotacoes { get; set; } = "";
     }
 
 }
