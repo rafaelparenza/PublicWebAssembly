@@ -51,7 +51,10 @@
                             </tr>
                         }
                         <tr>
-                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">Add jogador</MudButton></td>
+                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeA.Add(new("MID")))">Add jogador</MudButton>
+                                <MudButton title="remove ultimo jogador" Disabled=@(sumula?.jogadoresTimeA?.Count()<=3) Variant=Variant.Text Color="Color.Error" @onclick="@(()=>sumula?.jogadoresTimeA?.Remove(sumula.jogadoresTimeA.Last()))">remover jogador</MudButton>
+
+                            </td>
                         </tr>
                     </tbody>
 
@@ -85,11 +88,13 @@
                                 <td><input @onblur=gravarsumula @bind-value="jogador.nome" class="form-control" /></td>
                                 <td><input @onblur=gravarsumula @bind="jogador.gols" class="form-control" type="number" /></td>
                                 <td><input @onblur=gravarsumula @bind-value="jogador.assistencias" class="form-control" type="number" /></td>
-                                <td><input @onblur=gravarsumula @bind-value="jogador.golsContra" class="form-control" type="number" /></td>
+                                <td><input @onblur=gravarsumula @bind-value="jogador.golsContra" class="form-control" type="number" /> </td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">Add jogador</MudButton></td>
+                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">Add jogador</MudButton>
+                                <MudButton title="remove ultimo jogador" Disabled=@(sumula?.jogadoresTimeB?.Count()<=3) Variant=Variant.Text Color="Color.Error" @onclick="@(()=>sumula?.jogadoresTimeB?.Remove(sumula.jogadoresTimeB.Last()))">Remover jogador</MudButton>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -155,7 +160,7 @@
                         </thead>
                         <tbody>
 
-                            @foreach (var i in sumula.jogadoresTimeA ?? new())
+                            @foreach (var i in sumula?.jogadoresTimeA??new List<Jogadores>())
                             {
                                 <tr>
                                     <td>&nbsp;@i.posicao &nbsp</td>
@@ -167,7 +172,7 @@
                             }
                         </tbody>
                     </table>
-                    <div style="color:darkgreen"><b>Visitante: @sumula.nomeTimeB </b></div>
+                    <div style="color:darkgreen"><b>Visitante: @sumula?.nomeTimeB </b></div>
 
                     <table class="table-sm">
                         <thead>
@@ -181,7 +186,7 @@
                         </thead>
                         <tbody>
 
-                            @foreach (var i in sumula.jogadoresTimeB ?? new())
+                            @foreach (var i in sumula?.jogadoresTimeB??new List<Jogadores>())
                             {
                                 <tr>
                                     <td>&nbsp;@i.posicao &nbsp</td>
