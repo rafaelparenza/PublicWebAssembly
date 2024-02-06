@@ -1,0 +1,57 @@
+﻿@page "/MeuCampeonato"
+@using Microsoft.JSInterop
+@using System.Text.Json.Serialization;
+
+<PageTitle>Campeonatos</PageTitle>
+
+<MudContainer>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudPaper>
+                <h3>Criar Campeonato</h3>
+                <MudTextField Label="Nome do Campeonato" @bind-Value="@novoCampeonato.Nome" />
+                <MudButton OnClick="@AdicionarCampeonato" Variant="Variant.Filled">Adicionar</MudButton>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12">
+            <MudPaper>
+                <h3>Lista de Campeonatos</h3>
+                <MudTable Items="@campeonatos">
+                    <HeaderContent>
+                        <MudTh>Nome</MudTh>
+                        <MudTh>Data de Início</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.Nome</MudTd>
+                        <MudTd>@context.DataInicio.ToString("dd/MM/yyyy")</MudTd>
+                        <MudTd><MudIconButton></MudIconButton></MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+
+@code {
+
+
+    public class Campeonato
+    {
+        public int id { get; set; }
+        public string Nome { get; set; }
+        public DateTime DataInicio { get; set; } = DateTime.Now;
+        public List<objSumula> jogos { get; set; } = new();
+
+    }
+
+    List<Campeonato> campeonatos = new List<Campeonato>();
+    Campeonato novoCampeonato = new Campeonato();
+
+    void AdicionarCampeonato()
+    {
+        campeonatos.Add(new Campeonato { id=campeonatos.Select(a=>a.id).Max()+1, Nome = novoCampeonato.Nome, DataInicio = DateTime.Now, jogos = new() });
+        novoCampeonato = new Campeonato();
+    }
+}

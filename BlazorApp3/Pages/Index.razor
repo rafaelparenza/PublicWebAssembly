@@ -51,7 +51,8 @@
                             </tr>
                         }
                         <tr>
-                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeA.Add(new("MID")))">Add jogador</MudButton>
+                            <td colspan="5">
+                                <MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeA.Add(new("MID")))">Add jogador</MudButton>
                                 <MudButton title="remove ultimo jogador" Disabled=@(sumula?.jogadoresTimeA?.Count()<=3) Variant=Variant.Text Color="Color.Error" @onclick="@(()=>sumula?.jogadoresTimeA?.Remove(sumula.jogadoresTimeA.Last()))">remover jogador</MudButton>
 
                             </td>
@@ -92,7 +93,8 @@
                             </tr>
                         }
                         <tr>
-                            <td colspan="5"><MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">Add jogador</MudButton>
+                            <td colspan="5">
+                                <MudButton Variant=Variant.Text Color="Color.Info" @onclick="@(()=>sumula.jogadoresTimeB.Add(new("MID")))">Add jogador</MudButton>
                                 <MudButton title="remove ultimo jogador" Disabled=@(sumula?.jogadoresTimeB?.Count()<=3) Variant=Variant.Text Color="Color.Error" @onclick="@(()=>sumula?.jogadoresTimeB?.Remove(sumula.jogadoresTimeB.Last()))">Remover jogador</MudButton>
                             </td>
                         </tr>
@@ -101,45 +103,7 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-2">
-                <label for="selectEvento">Evento:</label>
-                <select id="selectEvento" @bind="@eventoSelecionado" class="form-control">
-                    <option value="Gol">Gol</option>
-                    <option value="Assistencia">Assistência</option>
-                    <option value="Contra">Contra</option>
-                </select>
-            </div>
-            <div class="col-lg-2">
-                <label for="selectEvento">Jogador:</label>
-                <select id="selectEvento" @bind="@nomeJogador" class="form-control">
-                    <option value="">Selecione</option>
 
-                    @foreach (var i in sumula.todosJogadores)
-                    {
-                        <option value="@i.nome">@i.nome</option>
-                    }
-
-                </select>
-            </div>
-            <div class="col-lg-2">
-                <MudButton Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" @onclick="AdicionarEvento" class="btn btn-primary mt-3">Add evento</MudButton>
-            </div>
-            <div class="col-lg-6">
-
-                <MudTextField @onblur=gravarsumula T="string" Label="Anotações do Juiz" Variant="Variant.Filled" @bind-Text="@sumula.Anotacoes" Lines="4" />
-
-            </div>
-            
-
-        </div>
-        
-
-        @*<div style="width:100%; text-align:center; padding:10px">
-    <div></div>
-    <div></div>
-    <button class="btn btn-primary" style="width:200px" @onclick="CopiarTexto">Finalizar sumula</button>
-    </div>*@
         <div class="row">
             <div class="col-lg-6">
                 <div>Copie e cole o texto abaixo no fórum</div>
@@ -160,7 +124,7 @@
                         </thead>
                         <tbody>
 
-                            @foreach (var i in sumula?.jogadoresTimeA??new List<Jogadores>())
+                            @foreach (var i in sumula?.jogadoresTimeA ?? new List<Jogadores>())
                             {
                                 <tr>
                                     <td>&nbsp;@i.posicao &nbsp</td>
@@ -186,7 +150,7 @@
                         </thead>
                         <tbody>
 
-                            @foreach (var i in sumula?.jogadoresTimeB??new List<Jogadores>())
+                            @foreach (var i in sumula?.jogadoresTimeB ?? new List<Jogadores>())
                             {
                                 <tr>
                                     <td>&nbsp;@i.posicao &nbsp</td>
@@ -200,34 +164,22 @@
                     </table>
 
                     <div style="color:black"><b>Anotações do Juiz:</b></div>
-                    <div> @((MarkupString)sumula.Anotacoes.Replace("\n","<br>"))</div>
+                    <div> @((MarkupString)sumula?.Anotacoes?.Replace("\n", "<br>"))</div>
 
                 </div>
             </div>
-            <div class="col-lg-6" >
-                <div>Log do jogo</div>
+            <div class="col-lg-6">
+                <div>Faça download do arquivo json do jogo e anexe no fórum</div>
                 <div style="border: 1px solid darkblue;padding:10px; background-color:white; height:100%">
-                <MudSimpleTable Dense Striped Bordered Hover>
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Evento</th>
-                        <th>Nome</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var evento in logs ?? new())
-                        {
-                            <tr>
-                                <td>@evento.data.ToString("dd/MM/yyyy HH:MM:ss")</td>
-                                <td>@evento.evento</td>
-                                <td>@evento.nome</td>
-                            </tr>
-                        }
-                    </tbody>
-                </MudSimpleTable>
+                    <div class="col-lg-12">
+                        <br>
+                        <h6><b>Atenção! Colocar os nomes corretamente, baixe o arquivo clicando no botão abaixo e anexe no fórum, isso é responsavel pela totalização dos gols e assistencias  </b></h6>
+                        <MudButton Variant=Variant.Filled Color="Color.Info" @onclick="SalvarTextoComoArquivo">Download do arquivo do jogo</MudButton>
+                    </div>
+
                 </div>
             </div>
+
         </div>
     </div>
     <br />
@@ -332,19 +284,7 @@
         public string evento { get; set; }
         public string nome { get; set; }
     }
-    private async Task CopiarTexto()
-    {
-        try
-        {
-            sumula.obtersumula();
-            //await _js.InvokeVoidAsync("navigator.clipboard.writeText", sumula.sssumula);
-            //await _js.InvokeVoidAsync("exibirAlerta", "Copiado para area de transferencia");
-        }
-        catch
-        {
 
-        }
-    }
     public async Task<string> GetCookie(string key)
     {
         return await _js.InvokeAsync<string>("cookieFunctions.getCookie", key);
@@ -359,71 +299,21 @@
     {
         await _js.InvokeVoidAsync("cookieFunctions.removeCookie", "sumula");
     }
-    public class objSumula
+
+    // Método para salvar a string em um arquivo de texto
+    async Task SalvarTextoComoArquivo()
     {
-        public objSumula(int i)
-        {
-            jogadoresTimeA = new();
-            jogadoresTimeA.Add(new("GK"));
-            jogadoresTimeA.Add(new("ZAG"));
-            jogadoresTimeA.Add(new("MID"));
-            jogadoresTimeA.Add(new("ATK"));
+        var texto = System.Text.Json.JsonSerializer.Serialize(sumula, new System.Text.Json.JsonSerializerOptions() { WriteIndented = true });
+        // Cria o conteúdo do arquivo
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(texto);
+        var content = new System.IO.MemoryStream(bytes);
 
-            jogadoresTimeB = new();
-            jogadoresTimeB.Add(new("GK"));
-            jogadoresTimeB.Add(new("ZAG"));
-            jogadoresTimeB.Add(new("MID"));
-            jogadoresTimeB.Add(new("ATK"));
-        }
-        public objSumula()
-        {
-        }
-        public string nomeTimeA { get; set; } = "";
-        public string nomeTimeB { get; set; } = "";
-        [JsonIgnore]
-        public int placarTimeA { get { return jogadoresTimeB.Select(a => a.golsContra).Sum() + jogadoresTimeA.Select(a => a.gols).Sum(); } }
-        [JsonIgnore]
-        public int placarTimeB { get { return jogadoresTimeA.Select(a => a.golsContra).Sum() + jogadoresTimeB.Select(a => a.gols).Sum(); } }
-        public List<Jogadores> jogadoresTimeA { get; set; } = new();
-        public List<Jogadores> jogadoresTimeB { get; set; } = new();
-        [JsonIgnore]
-        public List<Jogadores> todosJogadores
-        {
-            get
-            {
-                var jogadores = new List<Jogadores>();
-                jogadores.AddRange(jogadoresTimeA);
-                jogadores.AddRange(jogadoresTimeB);
-                return jogadores;
-            }
-        }
-        public void obtersumula()
-        {
-            sssumula = $@"<b>{nomeTimeA} {placarTimeA} VS {placarTimeB} {nomeTimeB}";
-            sssumula += $@"<table style='border:1px solid black'>";
-            sssumula += $@"<tr><th colspan=5>CASA: {nomeTimeA}</th></tr>";
-            sssumula += "<tr><th>| posicao |</th> <th>| Jogador |</th><th>|gol|</th> <th>| assistencia | </th> <th>| gol contra |</th></b><tr>";
+        // Obtém o nome do arquivo
+        string filename = $@"SUMULA {sumula.nomeTimeA} {sumula.placarTimeA} VS {sumula.placarTimeB} {sumula.nomeTimeB} - {DateTime.Now.ToString("ddMMyyyyHHmmss")}.json";
 
-            foreach (var i in jogadoresTimeA)
-            {
-                sssumula += "<tr style='border:1px solid black'><td>| " + i.posicao + " |</td><td>| " + i.nome + " |</td><td>| " + i.gols + " |</td><td>| " + i.assistencias + " |</td><td>| " + i.golsContra + " |</td></tr>";
-
-            }
-            sssumula += $@"<br><table style='border:1px solid black'>";
-            sssumula += $@"<tr><th colspan=5>VISITANTE: {nomeTimeB}</th></tr>";
-            sssumula += "<tr><th>| posicao |</th> <th>| Jogador |</th><th>|gol|</th> <th>| assistencia | </th> <th>| gol contra |</th></b><tr>";
-
-            foreach (var i in jogadoresTimeB)
-            {
-                sssumula += "<tr style='border:1px solid black'><td>| " + i.posicao + " |</td><td>| " + i.nome + " |</td><td>| " + i.gols + " |</td><td>| " + i.assistencias + " |</td><td>| " + i.golsContra + " | </td></tr>";
-
-            }
-
-        }
-        [JsonIgnore]
-        public string sssumula { get; set; }
-
-        public string Anotacoes { get; set; } = "";
+        // Cria e disponibiliza o arquivo para download
+        await _js.InvokeVoidAsync("BlazorDownloadFile.saveAsFile", filename, Convert.ToBase64String(bytes));
     }
+
 
 }
