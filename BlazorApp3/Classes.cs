@@ -45,6 +45,10 @@ namespace BlazorApp3
 
         [JsonIgnore]
         public string sssumula { get; set; }
+        [JsonIgnore]
+        public string link { get; set; }
         public string Anotacoes { get; set; } = "";
+
+        public DateTime dataJogo { get; set; }
     }
 }

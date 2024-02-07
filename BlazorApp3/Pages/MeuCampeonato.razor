@@ -1,37 +1,74 @@
 ﻿@page "/MeuCampeonato"
 @using Microsoft.JSInterop
 @using System.Text.Json.Serialization;
+@using System.Net.Http;
+@using System.Threading.Tasks;
+@using System.Text.Json;
+@inject JsonFileService jsonFileService
+
 
 <PageTitle>Campeonatos</PageTitle>
 
 <MudContainer>
     <MudGrid>
-        <MudItem xs="12">
-            <MudPaper>
-                <h3>Criar Campeonato</h3>
-                <MudTextField Label="Nome do Campeonato" @bind-Value="@novoCampeonato.Nome" />
-                <MudButton OnClick="@AdicionarCampeonato" Variant="Variant.Filled">Adicionar</MudButton>
-            </MudPaper>
+        <MudItem xs="12" Style="padding-bottom:10px">
+            <MudTable Items="@pontuacaoModel.OrderBy(a=>a.Pontuacao).ThenBy(a=>a.SaldoGols)" Hover=true Dense=true Striped=true>
+                <HeaderContent>
+                    <MudTh>nome time</MudTh>
+                    <MudTh>jogos</MudTh>
+                    <MudTh>Pontuacao</MudTh>
+                    <MudTh>Saldo Gols</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.nomeTime</MudTd>
+                    <MudTd>@context.Jogos</MudTd>
+                    <MudTd>@context.Pontuacao</MudTd>
+                    <MudTd>@context.SaldoGols</MudTd>
+                </RowTemplate>
+            </MudTable>
         </MudItem>
-        <MudItem xs="12">
+
+
+
+        <MudItem xs="12" Style="padding-bottom:10px">
             <MudPaper>
-                <h3>Lista de Campeonatos</h3>
-                <MudTable Items="@campeonatos">
+                <MudTable Items="@artilhariaModels" Hover=true Dense=true Striped=true>
                     <HeaderContent>
-                        <MudTh>Nome</MudTh>
-                        <MudTh>Data de Início</MudTh>
+                        <MudTh> <MudTableSortLabel SortBy="new Func<ArtilhariaModel, object>(x=>x.nome)">Jogador</MudTableSortLabel> </MudTh>
+                        <MudTh> <MudTableSortLabel SortBy="new Func<ArtilhariaModel, object>(x=>x.gols)">Gols</MudTableSortLabel></MudTh>
+                        <MudTh> <MudTableSortLabel SortBy="new Func<ArtilhariaModel, object>(x=>x.assistencia)">Assistência</MudTableSortLabel></MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>@context.Nome</MudTd>
-                        <MudTd>@context.DataInicio.ToString("dd/MM/yyyy")</MudTd>
-                        <MudTd><MudIconButton></MudIconButton></MudTd>
+                        <MudTd DataLabel="nome">@context.nome</MudTd>
+                        <MudTd DataLabel="gols">@context.gols</MudTd>
+                        <MudTd DataLabel="assistencia"> @context.assistencia</MudTd>
                     </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+                    </PagerContent>
                 </MudTable>
             </MudPaper>
         </MudItem>
     </MudGrid>
-</MudContainer>
 
+    <MudItem xs="12" Style="padding-bottom:10px">
+        <MudPaper>
+            <MudTable Items="@jogos.OrderByDescending(a=>a.dataJogo)" Hover=true Dense=true Striped=true>
+                <HeaderContent>
+                    <MudTh>Jogos</MudTh>
+                    <MudTh>data Jogo</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd><a href="@($"Jogos/{context.link}")"> @context.nomeTimeA @context.placarTimeA VS @context.placarTimeB @context.nomeTimeB</a> </MudTd>
+                    <MudTd>@context.dataJogo.ToString("dd/MM/yyyy HH:mm:ss")</MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+                </PagerContent>
+            </MudTable>
+        </MudPaper>
+    </MudItem>
+</MudContainer>
 
 
 @code {
@@ -42,16 +79,160 @@
         public int id { get; set; }
         public string Nome { get; set; }
         public DateTime DataInicio { get; set; } = DateTime.Now;
-        public List<objSumula> jogos { get; set; } = new();
 
     }
 
     List<Campeonato> campeonatos = new List<Campeonato>();
     Campeonato novoCampeonato = new Campeonato();
+    public List<objSumula> jogos { get; set; } = new();
 
-    void AdicionarCampeonato()
+    protected override async Task OnInitializedAsync()
     {
-        campeonatos.Add(new Campeonato { id=campeonatos.Select(a=>a.id).Max()+1, Nome = novoCampeonato.Nome, DataInicio = DateTime.Now, jogos = new() });
-        novoCampeonato = new Campeonato();
+        await AdicionarCampeonato();
+        await MontarPontuacaoTimes();
+        await MontarArtilharia();
     }
+
+    public async Task AdicionarCampeonato()
+    {
+        string filePath = "/Jogos/nomes_arquivos.json";
+        // Chame o serviço para ler o arquivo JSON
+        var jc = await jsonFileService.ReadJsonFileAsync<List<string>>(filePath);
+
+
+        foreach (var i in jc)
+        {
+            try
+            {
+                var s = await jsonFileService.ReadJsonFileAsync<objSumula>("Jogos/" + i);
+                if (s != null)
+                {
+                    s.link = i;
+                    jogos.Add(s);
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
+
+    }
+
+    public async Task MontarArtilharia()
+    {
+        foreach (var i in jogos.SelectMany(a => a.todosJogadores))
+        {
+            var jogador = artilhariaModels.FirstOrDefault(a => a.nome == i.nome);
+
+            if (jogador != null)
+            {
+                jogador.gols += i.gols;
+                jogador.assistencia += i.assistencias;
+            }
+            else
+            {
+                artilhariaModels.Add(new ArtilhariaModel()
+                    {
+                        nome = i.nome,
+                        gols = i.gols,
+                        assistencia = i.assistencias,
+                    });
+            }
+        }
+    }
+    public async Task MontarPontuacaoTimes()
+    {
+
+
+
+
+        foreach (var i in jogos)
+        {
+            var timeA = pontuacaoModel.FirstOrDefault(a => a.nomeTime == i.nomeTimeA);
+            if (timeA == null)
+            {
+                timeA = new()
+                    {
+                        nomeTime = i.nomeTimeA,
+                    };
+                pontuacaoModel.Add(timeA);
+            }
+
+            var timeB = pontuacaoModel.FirstOrDefault(a => a.nomeTime == i.nomeTimeB);
+            if (timeB == null)
+            {
+                timeB = new()
+                    {
+                        nomeTime = i.nomeTimeB,
+                    };
+                pontuacaoModel.Add(timeB);
+
+            }
+
+            timeA.SaldoGols += i.placarTimeA;
+            timeA.Jogos++;
+
+            timeB.SaldoGols += i.placarTimeB;
+            timeB.Jogos++;
+
+
+            if (i.placarTimeA > i.placarTimeB)
+            {
+                timeA.Pontuacao = timeA.Pontuacao + 3;
+
+            }
+            else if (i.placarTimeA < i.placarTimeB)
+            {
+                timeB.Pontuacao = timeB.Pontuacao + 3;
+
+            }
+            else
+            {
+                timeA.Pontuacao = timeA.Pontuacao + 1;
+                timeB.Pontuacao = timeB.Pontuacao + 1;
+            }
+        }
+    }
+
+
+    public async Task<List<object>> GetAllJsonFiles()
+    {
+        return await _js.InvokeAsync<List<object>>("interop.getAllJsonFiles");
+    }
+
+    private readonly HttpClient _httpClient;
+
+
+    public async Task<T> ReadJsonFileAsync<T>(string filePath)
+    {
+        // O caminho do arquivo deve ser relativo ao wwwroot
+        var response = await _httpClient.GetAsync(filePath);
+        response.EnsureSuccessStatusCode();
+        string jsonString = await response.Content.ReadAsStringAsync();
+
+        // Desserializa a string em um objeto C#
+        return System.Text.Json.JsonSerializer.Deserialize<T>(jsonString, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Opção para ignorar a diferenciação entre maiúsculas e minúsculas nas propriedades
+            });
+    }
+    public List<ArtilhariaModel> artilhariaModels { get; set; } = new();
+    public List<PontuacaoModel> pontuacaoModel { get; set; } = new();
+
+    public class ArtilhariaModel
+    {
+        public string nome { get; set; }
+        public int gols { get; set; }
+        public int assistencia { get; set; }
+    }
+    public class PontuacaoModel
+    {
+        public string nomeTime { get; set; }
+        public int Pontuacao { get; set; }
+        public int Jogos { get; set; }
+        public int SaldoGols { get; set; }
+    }
+
 }

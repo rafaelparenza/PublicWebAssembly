@@ -7,10 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="JsonFileService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BlazorTable" Version="1.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.10" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="6.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\Jogos\SUMULA.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

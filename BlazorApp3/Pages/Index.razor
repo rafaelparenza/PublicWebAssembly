@@ -303,6 +303,7 @@
     // Método para salvar a string em um arquivo de texto
     async Task SalvarTextoComoArquivo()
     {
+        sumula.dataJogo = DateTime.Now;
         var texto = System.Text.Json.JsonSerializer.Serialize(sumula, new System.Text.Json.JsonSerializerOptions() { WriteIndented = true });
         // Cria o conteúdo do arquivo
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(texto);

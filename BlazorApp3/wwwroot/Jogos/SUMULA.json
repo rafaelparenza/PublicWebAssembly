@@ -1,0 +1,65 @@
+{
+  "nomeTimeA": "",
+  "nomeTimeB": "",
+  "jogadoresTimeA": [
+    {
+      "posicao": "GK",
+      "nome": "gk1",
+      "gols": 4,
+      "assistencias": 0,
+      "golsContra": 0
+    },
+    {
+      "posicao": "ZAG",
+      "nome": "teste2",
+      "gols": 0,
+      "assistencias": 0,
+      "golsContra": 0
+    },
+    {
+      "posicao": "MID",
+      "nome": "teste4",
+      "gols": 0,
+      "assistencias": 0,
+      "golsContra": 0
+    },
+    {
+      "posicao": "ATK",
+      "nome": "teste5",
+      "gols": 0,
+      "assistencias": 0,
+      "golsContra": 0
+    }
+  ],
+  "jogadoresTimeB": [
+    {
+      "posicao": "GK",
+      "nome": "aAAA",
+      "gols": 5,
+      "assistencias": 0,
+      "golsContra": 0
+    },
+    {
+      "posicao": "ZAG",
+      "nome": null,
+      "gols": 0,
+      "assistencias": 0,
+      "golsContra": 0
+    },
+    {
+      "posicao": "MID",
+      "nome": null,
+      "gols": 0,
+      "assistencias": 0,
+      "golsContra": 0
+    },
+    {
+      "posicao": "ATK",
+      "nome": null,
+      "gols": 0,
+      "assistencias": 0,
+      "golsContra": 0
+    }
+  ],
+  "Anotacoes": ""
+}

@@ -60,3 +60,10 @@ window.cookieFunctions = {
         document.cookie = key + '=; Max-Age=-99999999;';
     }
 };
+window.interop = {
+    getAllJsonFiles: async function () {
+        const response = await fetch('/Jogos');
+        const jsonFiles = await response.json();
+        return jsonFiles;
+    }
+};
