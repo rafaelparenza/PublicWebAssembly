@@ -27,19 +27,26 @@
 
 @code {
     private string senha = "";
+    private string senha1 = "";
+    private string senha2 = "";
+    public string expected = "";
     private int currentCount = 0;
     public Root root { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
-
+        expected = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String("VHN1YmFzYTEw"));
+        senha1 = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String("aEBiYjAyMDIz")); // "h@bb02023"
+        senha2 = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String("bXlzZW5oYQ==")); // "mysenha"
     }
     public async Task Atualizar()
     {
+
+
         root = await Http.GetFromJsonAsync<Root>("https://api.thingspeak.com/channels/788684/feeds.json?results=10000") ?? new();
-        root.feeds = root.feeds.Where(a => a.field3 != "Tsubasa10" && a.field2 != "179.217.231.195" && a.field4 == "ProjetoKR2025").ToList();
+        root.feeds = root.feeds.Where(a => a.field3 != expected && a.field2 != "179.217.231.195" && a.field4 == "ProjetoKR2025").ToList();
     }
     public async Task envie(){
-        if (senha == "h@bb02023"|| senha=="mysenha")
+        if (senha == senha1|| senha==senha2)
         {
             await Atualizar();
         }
