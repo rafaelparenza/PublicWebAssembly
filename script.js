@@ -1,7 +1,7 @@
 ﻿
 
 function base64ToBlob(base64) {
-    const byteCharacters = atob(base64);
+    const byteCharacters = atob(base64); 
     const byteArrays = [];
 
     for (let offset = 0; offset < byteCharacters.length; offset += 512) {
