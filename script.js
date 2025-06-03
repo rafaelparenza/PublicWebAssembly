@@ -3,6 +3,7 @@
 function base64ToBlob(base64) {
     const byteCharacters = atob(base64);
     const byteArrays = [];
+    <!--teste-->
 
     for (let offset = 0; offset < byteCharacters.length; offset += 512) {
         const slice = byteCharacters.slice(offset, offset + 512);
